@@ -13,9 +13,8 @@
 
 <br><br>
 
-<!-- Screenshot Placeholder -->
-<!-- عکس محیط برنامه را با نام screenshot.png در پوشه Image قرار دهید -->
-<img src="Image/screenshot.png" alt="Screen Recorder Screenshot" width="800" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+<img width="1896" height="927" alt="تصویر اسکیرین ریکورد" src="https://github.com/user-attachments/assets/195658bf-3375-44c4-9c43-4da2d81d3f5b" />
+
 
 <br><br>
 
