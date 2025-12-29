@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Screen Recorder</title>
+    <style>
+        /* ---------------------------------------------------- */
+        /* تعریف خانواده فونت کلمه (Kalameh) */
+        /* ---------------------------------------------------- */
+
+        @font-face {
+            font-family: 'Kalameh';
+            src: url('fonts/Kalameh-Thin.woff2') format('woff2'),
+                 url('fonts/Kalameh-Thin.woff') format('woff');
+            font-weight: 100;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Kalameh';
+            src: url('fonts/Kalameh-Light.woff2') format('woff2'),
+                 url('fonts/Kalameh-Light.woff') format('woff');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Kalameh';
+            src: url('fonts/Kalameh-Regular.woff2') format('woff2'),
+                 url('fonts/Kalameh-Regular.woff') format('woff');
+            font-weight: 400; 
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Kalameh';
+            src: url('fonts/Kalameh-Medium.woff2') format('woff2'),
+                 url('fonts/Kalameh-Medium.woff') format('woff');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Kalameh';
+            src: url('fonts/Kalameh-Bold.woff2') format('woff2'),
+                 url('fonts/Kalameh-Bold.woff') format('woff');
+            font-weight: 700; 
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Kalameh';
+            src: url('fonts/Kalameh-Black.woff2') format('woff2'),
+                 url('fonts/Kalameh-Black.woff') format('woff');
+            font-weight: 900;
+            font-style: normal;
+        }
+
+        /* ---------------------------------------------------- */
+        /* تنظیمات اصلی و متغیرها */
+        /* ---------------------------------------------------- */
+
+        :root {
+            /* 
+               [توضیحات تصویر پس‌زمینه]
+               برای تغییر تصویر پس‌زمینه، فایل خود را در پوشه Image قرار دهید.
+            */
+            --bg-image: url('Image/background.png'); 
+
+            /* 
+               -------------------------------------------------------
+               [توضیحات لوگو / عکس پروفایل]
+               برای تغییر لوگو، فایل عکس خود را در پوشه Image قرار دهید.
+               سپس نام فایل را در کد HTML (داخل تگ img که کامنت گذاشته‌ام) چک کنید.
+               
+               مسیر پیش‌فرض فعلی: Image/logo.png
+               
+               ابعاد پیشنهادی: مربع کامل (مثلاً 200 در 200 پیکسل یا 512 در 512).
+               فرمت‌های مجاز: PNG (بدون پس‌زمینه برای زیبایی بیشتر) یا JPG.
+               -------------------------------------------------------
+            */
+
+            --primary-color: #1950a8;
+            --accent-color: #0c8b61;
+            --danger-color: #ac1d1d;
+        }
+
+        body {
+            font-family: 'Kalameh', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 400; 
+            background: #1e293b var(--bg-image) no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            
+            align-items: flex-start; /* به جای center از flex-start استفاده شد تا بالا قفل نشود */
+            padding-top: 80px;       /* فاصله از بالا برای نمایش لوگو */
+            padding-bottom: 80px;    /* فاصله از پایین برای اسکرول راحت */
+            min-height: 100vh;       /* حداقل ارتفاع کل صفحه */
+            box-sizing: border-box;  /* محاسبه دقیق پدینگ */
+            overflow-y: auto;        /* فعال‌سازی اسکرول عمودی */
+            /* ----------------------------------- */
+            
+            color: #fff;
+        }
+
+        .overlay {
+            background: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(12px);
+            padding: 50px 30px 30px 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 650px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            /* مارجین خودکار برای اطمینان از وسط چین شدن در حالت فلکس */
+            margin: auto 0; 
+        }
+
+        .logo-container {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-container img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .header { margin-top: 30px; text-align: center; }
+        .header h2 { font-weight: 700; margin-bottom: 10px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .control-item { display: flex; flex-direction: column; text-align: right; }
+        
+        label { 
+            font-size: 14px; 
+            margin-bottom: 5px; 
+            color: #cbd5e1; 
+            font-weight: 500; 
+        }
+        
+        select {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit; 
+        }
+        select option { background: #1e293b; font-family: inherit; }
+
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-family: inherit;
+            font-weight: 700; 
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        #startBtn { background: var(--primary-color); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        #startBtn:hover { transform: translateY(-2px); background: #2563eb; }
+
+        #stopBtn { background: var(--danger-color); color: white; display: none; }
+        
+        #downloadBtn { 
+            background: var(--accent-color); 
+            color: white; 
+            opacity: 0.2; 
+            cursor: not-allowed;
+            margin-top: 15px;
+        }
+        #downloadBtn.active { opacity: 1; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+
+        #pauseBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #f59e0b;
+            color: white;
+            border: 4px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            display: none;
+            z-index: 1000;
+            font-size: 28px;
+            transition: 0.2s;
+        }
+        #pauseBtn:hover { transform: scale(1.1); }
+
+        .social-info {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.8;
+            font-weight: 300; 
+        }
+        
+        .social-links-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            margin-top: 10px;
+        }
+
+        .social-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,255,255,0.05);
+            padding: 5px 12px;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+        .social-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        .social-item svg { width: 18px; height: 18px; fill: white; }
+        .social-item a { color: #fff; text-decoration: none; font-weight: 500; font-size: 13px; }
+
+        .donation-link {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 8px 25px;
+            background: #ac1d1d;
+            border-radius: 25px;
+            color: white !important;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(172, 29, 29, 0.4);
+        }
+        .donation-link:hover { background: #ec4899; transform: scale(1.05); }
+
+        .timer-box { 
+            font-size: 24px; 
+            color: #fbbf24; 
+            margin: 10px 0; 
+            display: none; 
+            font-weight: 700; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Segoe UI', sans-serif; 
+        }
+
+        /* استایل‌های مربوط به وب‌کم */
+        #webcamContainer {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            width: 200px;
+            height: 150px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border: 2px solid #fff;
+            display: none; /* پیش‌فرض مخفی */
+            cursor: grab;
+        }
+        #webcamContainer:active { cursor: grabbing; border-color: var(--accent-color); }
+        #webcamVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000;
+        }
+        /* کلاس‌های شکل وب‌کم */
+        .shape-rect { border-radius: 12px; width: 220px !important; height: 165px !important; }
+        .shape-square { border-radius: 12px; width: 200px !important; height: 200px !important; }
+        .shape-circle { border-radius: 50%; width: 200px !important; height: 200px !important; }
+    </style>
+</head>
+<body>
+
+    <!-- کانتینر وب‌کم که روی صفحه شناور است -->
+    <div id="webcamContainer">
+        <video id="webcamVideo" autoplay muted></video>
+    </div>
+
+    <button id="pauseBtn" title="توقف موقت/ادامه">⏸</button>
+
+    <div class="overlay">
+        <div class="logo-container">
+            <!-- 
+               [محل قرارگیری فایل لوگو]
+               عکس خود را در پوشه Image بگذارید و نام آن را اینجا بنویسید.
+               پیش‌فرض: Image/logo.png
+            -->
+            <img src="Image/logo.png" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3227/3227008.png'">
+        </div>
+
+        <div class="header">
+            <h2> اسکرین رکوردر پیشرفته - Advanced Screen Recorder </h2>
+            <div id="timer" class="timer-box">00:00</div>
+        </div>
+
+        <div class="grid">
+            <div class="control-item">
+                <label>کیفیت تصویر:</label>
+                <select id="videoQuality">
+                    <option value="1500000">Low (720p)</option>
+                    <option value="4500000" selected>Medium (1080p)</option>
+                    <option value="12000000">High (4K Crystal)</option>
+                </select>
+            </div>
+            <div class="control-item">
+                <label>فرمت دانلود:</label>
+                <select id="outputFormat">
+                    <option value="webm">WebM (استاندارد)</option>
+                    <option value="mp4">MP4 (سازگار)</option>
+                    <option value="mkv">MKV (حرفه‌ای)</option>
+                </select>
+            </div>
+            
+            <div class="control-item">
+                <label>ورودی صدا:</label>
+                <select id="micSelect">
+                    <option value="mute">🔇 بدون ضبط صدا</option>
+                    <option value="false">فقط صدای سیستم</option>
+                    <option value="true">سیستم + میکروفون</option>
+                </select>
+            </div>
+            <div class="control-item">
+                <label>تایمر توقف خودکار:</label>
+                <select id="timeLimit">
+                    <option value="0">بی‌نهایت</option>
+                    <option value="600000">10 دقیقه</option>
+                    <option value="1800000">30 دقیقه</option>
+                    <option value="3600000">60 دقیقه</option>
+                </select>
+            </div>
+
+            <!-- بخش تنظیمات وب‌کم -->
+            <div class="control-item">
+                <label>وضعیت وب‌کم:</label>
+                <select id="webcamToggle">
+                    <option value="off">خاموش</option>
+                    <option value="on">روشن</option>
+                </select>
+            </div>
+            <div class="control-item">
+                <label>شکل وب‌کم:</label>
+                <select id="webcamShape">
+                    <option value="rect">مستطیل</option>
+                    <option value="square">مربع</option>
+                    <option value="circle">دایره</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="startBtn" class="btn-main">Screen Recording 🔴 شروع ضبط صفحه</button>
+        <button id="stopBtn" class="btn-main">Stop Recording ❌ توقف ضبط</button>
+        
+        <button id="downloadBtn" class="btn-main" disabled>دانلود فایل ویدیو 📥 Download video file</button>
+
+        <div class="social-info">
+            <div>شبکه‌های اجتماعی من:</div>
+            
+            <div class="social-links-container">
+                <!-- لینک تلگرام -->
+                <div class="social-item">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.49 1.03-.75 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.88.11 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.13-.03.22z"/></svg>
+                    <!-- !!! لینک تلگرام خود را اینجا بگذارید !!! -->
+                    <a href="https://t.me/EngineerHt" target="_blank">Telegram</a> 
+                </div>
+
+                <!-- لینک اینستاگرام -->
+                <div class="social-item">
+                    <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+                    <!-- !!! لینک اینستاگرام خود را اینجا بگذارید !!! -->
+                    <a href="https://www.instagram.com/ho3seintork?igsh=MTkwdDNxaWtqcGs3aA==" target="_blank">Instagram</a>
+                </div>
+
+                <!-- لینک توییتر -->
+                <div class="social-item">
+                    <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <!-- !!! لینک توییتر خود را اینجا بگذارید !!! -->
+                    <a href="https://x.com/ho3seintork" target="_blank">Twitter (X)</a>
+                </div>
+            </div>
+
+            <!-- !!! لینک پرداخت/دونیشن خود را اینجا بگذارید !!! -->
+            <a href="https://reymit.ir/ho3seintork" class="donation-link" target="_blank">☕ حمایت مالی (Donation)</a>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+        let startTime;
+        let timerInterval;
+        let finalBlob;
+        let pauseStartTime = 0;
+        let totalPausedTime = 0;
+        let webcamStream = null;
+
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const timerDisplay = document.getElementById('timer');
+        
+        // المان‌های وب‌کم
+        const webcamContainer = document.getElementById('webcamContainer');
+        const webcamVideo = document.getElementById('webcamVideo');
+        const webcamToggle = document.getElementById('webcamToggle');
+        const webcamShape = document.getElementById('webcamShape');
+
+        startBtn.onclick = async () => {
+            recordedChunks = [];
+            totalPausedTime = 0;
+            downloadBtn.classList.remove('active');
+            downloadBtn.disabled = true;
+
+            try {
+                // 1. تنظیم وب‌کم اگر روشن باشد
+                if (webcamToggle.value === 'on') {
+                    try {
+                        webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                        webcamVideo.srcObject = webcamStream;
+                        webcamContainer.style.display = 'block';
+                        updateWebcamShape();
+                    } catch (err) {
+                        alert("دسترسی به وب‌کم داده نشد یا خطایی رخ داد.");
+                        console.error(err);
+                    }
+                } else {
+                    webcamContainer.style.display = 'none';
+                }
+
+                // 2. دریافت تصویر صفحه
+                const displayStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { frameRate: 30 },
+                    audio: true
+                });
+
+                let finalStream = displayStream;
+                const audioOption = document.getElementById('micSelect').value;
+
+                // 3. مدیریت صدا (بدون صدا / میکروفون / سیستم)
+                if (audioOption === "mute") {
+                    // حذف تمام ترک‌های صوتی از استریم نهایی
+                    finalStream = new MediaStream([...displayStream.getVideoTracks()]);
+                } 
+                else if (audioOption === "true") {
+                    // ترکیب میکروفون و سیستم
+                    const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const audioCtx = new AudioContext();
+                    const dest = audioCtx.createMediaStreamDestination();
+                    
+                    if (displayStream.getAudioTracks().length > 0) {
+                        audioCtx.createMediaStreamSource(displayStream).connect(dest);
+                    }
+                    audioCtx.createMediaStreamSource(micStream).connect(dest);
+                    
+                    finalStream = new MediaStream([
+                        ...displayStream.getVideoTracks(),
+                        ...dest.stream.getAudioTracks()
+                    ]);
+                }
+                // در حالت "false" (فقط سیستم)، خودکار صدا دارد اگر کاربر تیک share audio را بزند.
+
+                // شروع ضبط
+                mediaRecorder = new MediaRecorder(finalStream, {
+                    mimeType: 'video/webm; codecs=vp9',
+                    videoBitsPerSecond: parseInt(document.getElementById('videoQuality').value),
+                    // اگر صدا قطع باشد، بیت‌ریت صدا مهم نیست
+                    audioBitsPerSecond: audioOption === "mute" ? 0 : parseInt(document.getElementById('audioQuality').value)
+                });
+
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                
+                mediaRecorder.onstop = () => {
+                    finalBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                    downloadBtn.classList.add('active');
+                    downloadBtn.disabled = false;
+                    
+                    // توقف تمام استریم‌ها (صفحه و وب‌کم)
+                    finalStream.getTracks().forEach(t => t.stop());
+                    if (webcamStream) {
+                        webcamStream.getTracks().forEach(t => t.stop());
+                        webcamContainer.style.display = 'none';
+                    }
+                    resetUI();
+                };
+
+                mediaRecorder.start();
+                startUI();
+                
+                const limit = parseInt(document.getElementById('timeLimit').value);
+                if (limit > 0) setTimeout(() => { if (mediaRecorder.state !== 'inactive') stopBtn.click(); }, limit);
+
+            } catch (e) { 
+                console.error(e);
+                alert("خطا در شروع ضبط. لطفاً دسترسی‌ها را بررسی کنید."); 
+            }
+        };
+
+        stopBtn.onclick = () => mediaRecorder.stop();
+
+        pauseBtn.onclick = () => {
+            if (mediaRecorder.state === "recording") {
+                mediaRecorder.pause();
+                pauseBtn.innerText = "▶️";
+                pauseStartTime = Date.now();
+                clearInterval(timerInterval);
+            } else if (mediaRecorder.state === "paused") {
+                totalPausedTime += (Date.now() - pauseStartTime);
+                mediaRecorder.resume();
+                pauseBtn.innerText = "⏸";
+                resumeTimer();
+            }
+        };
+
+        // دانلود با فرمت انتخابی
+        downloadBtn.onclick = () => {
+            if(!finalBlob) return;
+            const format = document.getElementById('outputFormat').value; // webm, mp4, mkv
+            const url = URL.createObjectURL(finalBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ScreenRecord-${new Date().toLocaleTimeString().replace(/:/g,'-')}.${format}`;
+            a.click();
+        };
+
+        // تغییر شکل وب‌کم
+        webcamShape.onchange = updateWebcamShape;
+        function updateWebcamShape() {
+            webcamContainer.className = ''; // ریست کلاس
+            webcamContainer.classList.add('shape-' + webcamShape.value);
+        }
+
+        // قابلیت جابجایی (Drag & Drop) وب‌کم
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        webcamContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - webcamContainer.getBoundingClientRect().left;
+            offsetY = e.clientY - webcamContainer.getBoundingClientRect().top;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                webcamContainer.style.left = (e.clientX - offsetX) + 'px';
+                webcamContainer.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        function startUI() {
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            pauseBtn.style.display = 'block';
+            timerDisplay.style.display = 'block';
+            startTime = Date.now();
+            resumeTimer();
+        }
+
+        function resetUI() {
+            startBtn.style.display = 'block';
+            stopBtn.style.display = 'none';
+            pauseBtn.style.display = 'none';
+            timerDisplay.style.display = 'none';
+            clearInterval(timerInterval);
+            pauseBtn.innerText = "⏸";
+        }
+
+        function resumeTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime - totalPausedTime) / 1000);
+                const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const s = (elapsed % 60).toString().padStart(2, '0');
+                timerDisplay.innerText = `${m}:${s}`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
