@@ -1,16 +1,14 @@
 <div align="center">
 
-# Advanced Screen Recorder
-# اسکرین رکوردر پیشرفته و متن‌باز
+# Advanced Screen Recorder - اسکرین رکوردر پیشرفته و متن‌باز
 
 <!-- Language Switcher Buttons -->
 <a href="#-english">
-  <img src="<img width="1896" height="927" alt="تصویر اسکیرین ریکورد" src="https://github.com/user-attachments/assets/95c8050b-3c1d-4e1c-83ba-e6c874b3ef2f" />
-" alt="English">
+  <img src="https://img.shields.io/badge/Language-English-blue?style=for-the-badge" alt="English">
 </a>
 &nbsp;&nbsp;
 <a href="#-persian">
-  <img src="https://img.shields.io/badge/زبان-فارسی-green?style=for-the-badge" alt="Persian">
+  <img src="https://img.shields.io/badge/Language-Persian-green?style=for-the-badge" alt="Persian">
 </a>
 
 <br><br>
@@ -36,7 +34,7 @@
 
 <!-- Donation Button -->
 <a href="https://reymit.ir/ho3seintork">
-  <img src="https://img.shields.io/badge/☕_Donate-حمایت_مالی-red?style=for-the-badge" alt="Donation">
+  <img src="https://img.shields.io/badge/☕_Donate-red?style=for-the-badge" alt="Donate">
 </a>
 
 </div>
@@ -68,7 +66,7 @@ I wrote this code when I was at an exhibition booth trying to record a presentat
 ---
 
 <div align="center">
-  <a href="#advanced-screen-recorder">⬆️ Back to Top</a>
+  <a href="#advanced-screen-recorder---اسکرین-رکوردر-پیشرفته-و-متن‌باز">⬆️ Back to Top</a>
 </div>
 
 ---
@@ -98,5 +96,5 @@ I wrote this code when I was at an exhibition booth trying to record a presentat
 ---
 
 <div align="center">
-  <a href="#advanced-screen-recorder">⬆️ بازگشت به بالا</a>
+  <a href="#advanced-screen-recorder---اسکرین-رکوردر-پیشرفته-و-متن‌باز">⬆️ بازگشت به بالا</a>
 </div>
