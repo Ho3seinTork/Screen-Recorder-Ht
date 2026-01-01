@@ -4,77 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Screen Recorder</title>
+    
+    <!-- لینک فونت آنلاین وزیرمتن (برای رفع ارور فونت) -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+
     <style>
-        /* ---------------------------------------------------- */
-        /* تعریف خانواده فونت کلمه (Kalameh) */
-        /* ---------------------------------------------------- */
-
-        @font-face {
-            font-family: 'Kalameh';
-            src: url('fonts/Kalameh-Thin.woff2') format('woff2'),
-                 url('fonts/Kalameh-Thin.woff') format('woff');
-            font-weight: 100;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Kalameh';
-            src: url('fonts/Kalameh-Light.woff2') format('woff2'),
-                 url('fonts/Kalameh-Light.woff') format('woff');
-            font-weight: 300;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Kalameh';
-            src: url('fonts/Kalameh-Regular.woff2') format('woff2'),
-                 url('fonts/Kalameh-Regular.woff') format('woff');
-            font-weight: 400; 
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Kalameh';
-            src: url('fonts/Kalameh-Medium.woff2') format('woff2'),
-                 url('fonts/Kalameh-Medium.woff') format('woff');
-            font-weight: 500;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Kalameh';
-            src: url('fonts/Kalameh-Bold.woff2') format('woff2'),
-                 url('fonts/Kalameh-Bold.woff') format('woff');
-            font-weight: 700; 
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Kalameh';
-            src: url('fonts/Kalameh-Black.woff2') format('woff2'),
-                 url('fonts/Kalameh-Black.woff') format('woff');
-            font-weight: 900;
-            font-style: normal;
-        }
-
         /* ---------------------------------------------------- */
         /* تنظیمات اصلی و متغیرها */
         /* ---------------------------------------------------- */
 
         :root {
-            /* 
-               [توضیحات تصویر پس‌زمینه]
-               برای تغییر تصویر پس‌زمینه، فایل خود را در پوشه Image قرار دهید.
-            */
+            /* تنظیمات تصویر پس‌زمینه */
             --bg-image: url('Image/background.png'); 
-
-            /* 
-               -------------------------------------------------------
-               [توضیحات لوگو / عکس پروفایل]
-               برای تغییر لوگو، فایل عکس خود را در پوشه Image قرار دهید.
-               سپس نام فایل را در کد HTML (داخل تگ img که کامنت گذاشته‌ام) چک کنید.
-               
-               مسیر پیش‌فرض فعلی: Image/logo.png
-               
-               ابعاد پیشنهادی: مربع کامل (مثلاً 200 در 200 پیکسل یا 512 در 512).
-               فرمت‌های مجاز: PNG (بدون پس‌زمینه برای زیبایی بیشتر) یا JPG.
-               -------------------------------------------------------
-            */
 
             --primary-color: #1950a8;
             --accent-color: #0c8b61;
@@ -82,7 +23,8 @@
         }
 
         body {
-            font-family: 'Kalameh', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* استفاده از فونت وزیرمتن که آنلاین لود می‌شود */
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-weight: 400; 
             background: #1e293b var(--bg-image) no-repeat center center fixed;
             background-size: cover;
@@ -90,13 +32,12 @@
             display: flex;
             justify-content: center;
             
-            align-items: flex-start; /* به جای center از flex-start استفاده شد تا بالا قفل نشود */
-            padding-top: 80px;       /* فاصله از بالا برای نمایش لوگو */
-            padding-bottom: 80px;    /* فاصله از پایین برای اسکرول راحت */
-            min-height: 100vh;       /* حداقل ارتفاع کل صفحه */
-            box-sizing: border-box;  /* محاسبه دقیق پدینگ */
-            overflow-y: auto;        /* فعال‌سازی اسکرول عمودی */
-            /* ----------------------------------- */
+            align-items: flex-start; 
+            padding-top: 80px;      
+            padding-bottom: 80px;    
+            min-height: 100vh;      
+            box-sizing: border-box; 
+            overflow-y: auto;       
             
             color: #fff;
         }
@@ -111,7 +52,6 @@
             box-shadow: 0 25px 50px rgba(0,0,0,0.6);
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
-            /* مارجین خودکار برای اطمینان از وسط چین شدن در حالت فلکس */
             margin: auto 0; 
         }
 
@@ -485,8 +425,8 @@
                 mediaRecorder = new MediaRecorder(finalStream, {
                     mimeType: 'video/webm; codecs=vp9',
                     videoBitsPerSecond: parseInt(document.getElementById('videoQuality').value),
-                    // اگر صدا قطع باشد، بیت‌ریت صدا مهم نیست
-                    audioBitsPerSecond: audioOption === "mute" ? 0 : parseInt(document.getElementById('audioQuality').value)
+                    // !!! تغییر مهم برای رفع ارور: حذف ارجاع به audioQuality و استفاده از مقدار ثابت !!!
+                    audioBitsPerSecond: audioOption === "mute" ? 0 : 128000
                 });
 
                 mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
